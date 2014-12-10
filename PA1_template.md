@@ -4,13 +4,25 @@
 ### Loading and preprocessing the data
 
 * Load the data.
-```{r, echo=TRUE}
+
+```r
 data = read.csv("activity.csv")
 head(data)
 ```
 
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
+```
+
 * Process/transform the data (if necessary) into a format suitable for your analysis
-```{r, echo = TRUE}
+
+```r
 # Remove records with 'steps' = 'NA'
 data2 = na.omit(data)
 ```
@@ -18,7 +30,8 @@ data2 = na.omit(data)
 ### What is mean total number of steps taken per day?
 
 * Make a histogram of the total number of steps taken each day
-```{r, echo=TRUE, fig.width=5, fig.height=5}
+
+```r
 data2.noDate = subset(data2, select = -date)
 data2.date = subset(data2, select = date)
 
@@ -28,18 +41,22 @@ dailySteps = aggregate(data2.noDate, data2.date, sum)
 hist(dailySteps[,2], breaks=30, main='Histogram of Daily Step Totals', xlab='Interval')  
 ```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+
 * Calculate and report the mean and median total number of steps taken per day
-```{r, echo=TRUE}
+
+```r
 meanDailySteps = mean(dailySteps[,2])
 medianDailySteps = median(dailySteps[,2])
 ```
-The  **mean**  number of steps taken per day is:       **`r format(meanDailySteps, nsmall=2, big.mark=',')`**.  
-The **median** number of steps taken per day is: **`r format(medianDailySteps, nsmall=2, big.mark=',')`**.
+The  **mean**  number of steps taken per day is:       **10,766.19**.  
+The **median** number of steps taken per day is: **10,765**.
 
 ### What is the average daily activity pattern?
 
 * Make a time series plot of the 5-minute interval and the average number of steps taken, averaged across all days 
-```{r, echo=TRUE, fig.width=5, fig.height=5}
+
+```r
 # Calculate the average number of steps taken (across all days) per 5-minute interval.
 data2.steps = subset(data2, select = steps)
 data2.interval = subset(data2, select = interval)
@@ -49,24 +66,29 @@ aveIntervalSteps = aggregate(data2.steps, data2.interval, mean)
 plot(unique(data2$interval), aveIntervalSteps$steps, type='l', main='Average Steps by Interval', xlab='Interval', ylab='Average Number of Steps Taken')
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+
 * Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-```{r, echo=TRUE}
+
+```r
 maxSteps = max(aveIntervalSteps$steps)
 highInterval = unique(data2$interval)[which(aveIntervalSteps[,2] == maxSteps)]
 ```
-The greatest average number of steps taken (**`r format(maxSteps, nsmall=2)`**) were taken in interval **`r highInterval`**. 
+The greatest average number of steps taken (**206.17**) were taken in interval **835**. 
 
 ### Imputing missing values
 
 * Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
-```{r, echo=TRUE}
+
+```r
 data3 = data
 nas = sum(is.na(data3$steps))
 ```
-**`r nas`** rows in the dataset had missing values.  
+**2304** rows in the dataset had missing values.  
 
 * Devise a strategy for filling in all of the missing values in the dataset. 
-```{r, echo=TRUE}
+
+```r
 # Identify the intervals that have missing values.
 naIntervals = data3[which(is.na(data3$steps)),3]
 
@@ -76,13 +98,15 @@ replacements = aveIntervalSteps[match(naIntervals, aveIntervalSteps[,1]), 2]
 Via the preceding code, each missing 'steps' value was repaced with the average number of steps taken during the interval (identified by number) associated with that missing value. (For the calculations of the average steps taken per interval, see the R code immediately preceding the line graph above.)   
 
 * Create a new dataset that is equal to the original dataset but with the missing data filled in.
-```{r, echo=TRUE}
+
+```r
 # Replace the missing data with 'replacements' as calculated above.
 data3[which(is.na(data3$steps)),1] = replacements
 ```
 
 * Make a histogram of the total number of steps taken each day and calculate and report the mean and median total number of steps taken per day. 
-```{r, echo=TRUE, fig.width=5, fig.height=5}
+
+```r
 # Calculate the total number of steps taken per day for imputed data.
 data3.noDate = subset(data3, select = -date)
 data3.date = subset(data3, select = date)
@@ -90,13 +114,17 @@ data3.date = subset(data3, select = date)
 dailyStepsImputed = aggregate(data3.noDate, data3.date, sum)
 
 hist(dailyStepsImputed[,2], breaks=30, main='Histogram of Daily Step Totals\n(with Imputation)', xlab='Interval')
+```
 
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
+
+```r
 # Calculate the mean and median number of steps taken.
 meanDailyStepsImputed = mean(dailyStepsImputed[,2])
 medianDailyStepsImputed = median(dailyStepsImputed[,2])
 ```
-The  **mean**  number of steps taken per day is:       **`r format(meanDailyStepsImputed, nsmall=2, big.mark=',')`**.  
-The **median** number of steps taken per day is: **`r format(medianDailyStepsImputed, nsmall=2, big.mark=',')`**.
+The  **mean**  number of steps taken per day is:       **10,766.19**.  
+The **median** number of steps taken per day is: **10,766.19**.
 
 * Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?   
   
@@ -106,7 +134,8 @@ Using the described imputation method had no impact on the estimation of total n
 ### Are there differences in activity patterns between weekdays and weekends?
 
 * Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
-```{r, echo=TRUE}
+
+```r
 # Identify the weekday by the given date.
 data3$days = weekdays(as.Date(as.character(data3$date)))
 
@@ -122,7 +151,8 @@ data3$weekday_or_weekend = ifelse(data3$days %in% c('Saturday', 'Sunday'), 'Week
 
 
 * Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days.
-```{r, echo=TRUE, fig.width=5, fig.height=5}
+
+```r
 # Create lists for the aggregate() function.
 data3.steps = subset(data3, select = steps)
 data3.interval = subset(data3, select = interval)
@@ -137,6 +167,8 @@ plot = ggplot(aveIntervalStepsImputed, aes(interval, steps)) + geom_line()
 
 plot + facet_wrap(~weekday_or_weekend, nrow=2) + xlab('Interval') + ylab('Average Number of Steps Taken')
 ```
+
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
 ***
 ---
 ***
