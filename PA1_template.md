@@ -38,7 +38,7 @@ data2.date = subset(data2, select = date)
 # Sum steps within dates
 dailySteps = aggregate(data2.noDate, data2.date, sum)
 
-hist(dailySteps[,2], breaks=30, main='Histogram of Daily Step Totals', xlab='Interval')  
+hist(dailySteps[,2], breaks=30, main='Histogram of Daily Step Totals', xlab='Number of Steps')  
 ```
 
 ![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
@@ -113,7 +113,7 @@ data3.date = subset(data3, select = date)
 
 dailyStepsImputed = aggregate(data3.noDate, data3.date, sum)
 
-hist(dailyStepsImputed[,2], breaks=30, main='Histogram of Daily Step Totals\n(with Imputation)', xlab='Interval')
+hist(dailyStepsImputed[,2], breaks=30, main='Histogram of Daily Step Totals\n(with Imputation)', xlab='Number of Steps')
 ```
 
 ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
